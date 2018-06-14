@@ -1,0 +1,22 @@
+Event-driven programming in Perl
+Charles McGarvey | Mon, 6/18 at 2:00 pm | 50 minutes | Ballroom B
+
+Event-driven programming is a paradigm where programmers creates subroutines
+that get called when events occur. Events can be just about anything: timers
+expiring, new data becoming available to read from a socket, even humans
+clicking on things in an interactive program.
+
+Event-driven programming definitely isn't anything new, but there have been
+some interesting developments over the past ten years. Event-driven frameworks
+and applications have risen in popularity and are replacing systems built
+using outdated techniques. New methods and language features have been created
+to make event-driven programming nicer.
+
+In this talk we’ll go over:
+
+ - the language features in Perl that make event-driven programming happen,
+ - some CPAN modules that offer the extra functionality you need.
+
+This talk is somewhat geared toward beginners (either to Perl or to
+event-driven programming), but it may also be interesting to anyone wondering
+about the current state of event-driven programming in Perl.

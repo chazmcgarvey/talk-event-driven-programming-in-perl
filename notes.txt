@@ -1,0 +1,40 @@
+
+Topics:
+
+Evolution of event-driven programming:
+- Wait for a key press or line of text.
+- Interrupts (hardware and software).
+- Modern event loops
+
+How to write a modern event-loop.
+- kernel facilities (poll, select, etc.)
+
+Event-drive programming in Perl
+- POE
+- AnyEvent
+- IO::Async
+
+List of already-built event loops.
+- EV
+- Glib
+
+Types of events in modern applications:
+- Data available
+- Timer
+- User input
+- Signal
+- Anything that can spontaneously happen in the real world.
+
+Exceptions in event-driven code.
+
+Promises:
+- Future
+- Future::AsyncAwait
+- Future::Utils
+
+Real-world uses for event-driven applications:
+- Webhooks
+- WebSockets
+- PubsubHubbub
+- msg queue
+
