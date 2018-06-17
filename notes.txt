@@ -30,6 +30,7 @@ X kernel facilities (poll, select, etc.)
 - Exceptions in event-driven code.
 - SIGPIPE, EPIPE - might have more to do with long-lived processes rather than
   just event-driven programming, but still something to watch out for...
+- You should almost always check the return code of your syscalls to see if they succeeded or not.
 
 7. Promises:
 - Future
@@ -51,6 +52,7 @@ X What is event-driven programming?
 - C10k problem
 - EDA (event-driven architecture)
 - Benefits of Event-driven
+- How to debug event-driven code.
 
 Traditional programs:
 - CGI - web server calls your program, and your program does its thing and

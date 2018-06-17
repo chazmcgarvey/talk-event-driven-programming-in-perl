@@ -10,7 +10,6 @@
     width: 100%;
 }
 
-
 .pizza img {
     width: 70%;
 }
@@ -51,5 +50,13 @@
 
 .ex-asyncawait .perl {
     font-size: 32px;
+}
+
+#slide-not-all-roses img {
+    width: 70%;
+}
+
+.ex-exceptions .perl {
+    font-size: 38px;
 }
 

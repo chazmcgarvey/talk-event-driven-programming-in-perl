@@ -446,6 +446,56 @@ while (1) {
 ]
 
 ---
+name:  not-all-roses
+class: center, middle
+
+![Thorns](img/thorn.jpg)
+
+## Watch out for the thorns...
+
+???
+There are some special considerations you need to take when writing event-driven code.
+
+---
+class: center, middle
+
+## Exceptions for error handling
+
+---
+class: center, middle
+
+### Problem: No exception handler up the call stack
+
+---
+class: ex-exceptions
+
+## Rule: Don't die/throw in event handlers.
+
+--
+### Error callback pattern
+
+```perl
+do_something_asynchronously(
+    callback => sub { ... },
+    on_error => sub { ... },
+);
+```
+
+---
+class: ex-exceptions
+
+## Rule: Don't die/throw in event handlers.
+
+### Use promises
+
+```perl
+my $promise = do_something_asynchronously();
+
+$promise->on_done(sub { ... });
+$promise->on_fail(sub { ... });
+```
+
+---
 class: center, middle
 
 ## Use [`Future::AsyncAwait`](https://metacpan.org/pod/Future::AsyncAwait).
