@@ -54,6 +54,9 @@ my $pizza = prepare_and_bake($order, $ingredentials);
 print($pizza);
 ```
 
+???
+But some programs are long-lived.
+
 ---
 ## Event-driven programs
 
@@ -68,7 +71,10 @@ At it's core, event-driven programming is this simple.
 But there are some complications and things to knows, which is why this talk exists.
 
 ---
+name:  graph-eventloop
 class: center, middle
+
+## Event loop
 
 ![Event loop](img/eventloop.svg)
 
@@ -364,8 +370,29 @@ class: syscalls
 ### syscalls
 
 - [`pause`](http://man.he.net/man2/pause) - Sleeps until signal
+
+--
 - [`select`](http://man.he.net/man2/select), [`poll`](http://man.he.net/man2/poll), [`epoll`](http://man.he.net/man7/epoll), [`kqueue`](https://www.freebsd.org/cgi/man.cgi?format=ascii&sektion=2&query=kqueue) - Monitor multiple file descriptors
+
+--
 - [`clock_gettime`](http://man.he.net/man2/clock_gettime) - What time is it now?
+
+---
+
+## Reactor pattern
+
+.big[
+- Queues events asynchronously.
+- Demultiplexes and dispatches synchronously.
+]
+
+---
+name:  graph-reactor
+class: center, middle
+
+## Reactor pattern
+
+![Reactor](img/reactor.svg)
 
 ---
 class: ex-basicreactor
@@ -387,6 +414,25 @@ while (1) {
 ```
 
 ---
+class: ex-basicreactor
+
+## The basic reactor
+
+```perl
+our $timers     = [...];
+our $io_handles = [...];
+
+while (1) {
+    my $next_timer = find_next_timer($timers);
+
+*   poll($io_handles, $next_timer->time_from_now);
+
+    handle_ready_io_handles($io_handles);
+    handle_expired_timers($timers);
+}
+```
+
+---
 
 ## Reactor examples on CPAN
 
@@ -398,6 +444,66 @@ while (1) {
 - [`IO::Async::Loop::Select`](https://metacpan.org/source/IO::Async::Loop::Select)
 - [`Mojo::Reactor::Poll`](https://metacpan.org/source/Mojo::Reactor::Poll)
 ]
+
+---
+class: center, middle
+
+## Use [`Future::AsyncAwait`](https://metacpan.org/pod/Future::AsyncAwait).
+
+???
+If you have used JavaScript recently, you may have used its "async/await" feature to clean up your non-blocking code.
+
+---
+class: center, middle
+
+### Yes, Perl can do it, too!
+
+---
+class: ex-asyncawait
+
+## Without async and await
+
+```perl
+use Future;
+
+sub do_two_things {
+    return do_first_thing()->then(sub {
+        my $first = shift;
+
+        return do_second_thing($first)->then(sub {
+            my $second = shift;
+
+            return Future->done([$first, $second]);
+        });
+    });
+}
+```
+
+---
+class: ex-asyncawait
+
+## With async and await
+
+```perl
+use Future::AsyncAwait;
+
+async sub do_two_things
+{
+    my $first = await do_first_thing();
+
+    my $second = await do_second_thing($first);
+
+    return [$first, $second];
+}
+```
+
+???
+There are caveats: Localized variable assignments don't work, nor anything that has implied local-like behavior.
+---
+
+## Events in the world
+
+
 
 ---
 class: center, middle

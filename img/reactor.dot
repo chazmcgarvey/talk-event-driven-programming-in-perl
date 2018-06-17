@@ -24,7 +24,14 @@ digraph G {
     "Event source 2" -> "Wait for\nan event\nto happen"
     "Event source N" -> "Wait for\nan event\nto happen"
 
-    "Wait for\nan event\nto happen" -> "Handle an\nevent" [label="Something happened...\n", tailport="n", headport="n"]
-    "Handle an\nevent" -> "Wait for\nan event\nto happen" [tailport="s", headport="s"]
+    "Wait for\nan event\nto happen" -> "Demultiplex and\ndispatch events" [tailport="n", headport="n"]
+    "Demultiplex and\ndispatch events" -> "Wait for\nan event\nto happen" [tailport="s", headport="s"]
+
+    "Demultiplex and\ndispatch events" -> "Event handler 1"
+    "Demultiplex and\ndispatch events" -> "Event handler 2"
+    "Demultiplex and\ndispatch events" -> "Event handler M"
+
+
+    "Demultiplex and\ndispatch events" [style="rounded,filled",fillcolor="#FFFF88"]
 }
 

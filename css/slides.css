@@ -3,6 +3,14 @@
     background: url('../img/bluehost.png') 1100px;
 }
 
+#slide-graph-eventloop img {
+    width: 100%;
+}
+#slide-graph-reactor img {
+    width: 100%;
+}
+
+
 .pizza img {
     width: 70%;
 }
@@ -39,5 +47,9 @@
 
 .ex-basicreactor .perl {
     font-size: 38px;
+}
+
+.ex-asyncawait .perl {
+    font-size: 32px;
 }
 

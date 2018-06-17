@@ -1,4 +1,5 @@
 *.pdf
 /img/eventloop.svg
+/img/reactor.svg
 /remark.min.js
 /slides-offline.html
