@@ -27,10 +27,10 @@ X kernel facilities (poll, select, etc.)
 - Mojo::IOLoop
 
 6. Special considerations
-- Exceptions in event-driven code.
-- SIGPIPE, EPIPE - might have more to do with long-lived processes rather than
+X Exceptions in event-driven code.
+X SIGPIPE, EPIPE - might have more to do with long-lived processes rather than
   just event-driven programming, but still something to watch out for...
-- You should almost always check the return code of your syscalls to see if they succeeded or not.
+X You should almost always check the return code of your syscalls to see if they succeeded or not.
 
 7. Promises:
 - Future

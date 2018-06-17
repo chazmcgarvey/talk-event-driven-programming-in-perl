@@ -498,6 +498,39 @@ $promise->on_fail(sub { ... });
 ---
 class: center, middle
 
+## `SIGPIPE`
+
+---
+class: sigpipe
+## `SIGPIPE`
+
+- Sent to your program when it writes to a pipe that was closed.
+
+--
+- Default signal handler terminates the program.
+
+---
+class: ex-sigpipe
+
+## Solution: Ignore `SIGPIPE`
+
+```perl
+$SIG{PIPE} = 'IGNORE';
+```
+
+???
+Some event loops do this for you.
+
+--
+.big[
+Look for `EPIPE` from syscalls (like [`write`](http://man.he.net/man2/write)) instead.
+
+(You *are* checking return codes from your system calls... right?)
+]
+
+---
+class: center, middle
+
 ## Use [`Future::AsyncAwait`](https://metacpan.org/pod/Future::AsyncAwait).
 
 ???
