@@ -71,6 +71,16 @@ At it's core, event-driven programming is this simple.
 But there are some complications and things to knows, which is why this talk exists.
 
 ---
+class: center, middle
+
+![Help desk](img/helpdesk.jpg)
+
+.small[
+Image by Soniachat8.
+This image is licensed under the [Creative Commons Attribution-Share Alike 4.0 International](https://creativecommons.org/licenses/by-sa/4.0/deed.en) license.
+]
+
+---
 name:  graph-eventloop
 class: center, middle
 
@@ -378,7 +388,11 @@ class: syscalls
 - [`clock_gettime`](http://man.he.net/man2/clock_gettime) - What time is it now?
 
 ---
+class: center, middle
 
+## Reactor pattern
+
+---
 ## Reactor pattern
 
 .big[
@@ -395,9 +409,26 @@ class: center, middle
 ![Reactor](img/reactor.svg)
 
 ---
-class: ex-basicreactor
+class: ex-basicreactor1
 
-## The basic reactor
+## Using a reactor
+
+```perl
+my $reactor = My::Reactor->new;
+
+# Set up event handlers
+$reactor->slurp_file($filepath, \&handle_slurp_event);
+$reactor->timer(5, \&handle_timer_event);
+$reactor->listen($socket, \&handle_new_connect_event);
+...
+
+$reactor->run_loop;
+```
+
+---
+class: ex-basicreactor2
+
+## The basic reactor implementation
 
 ```perl
 our $timers     = [...];
@@ -414,9 +445,9 @@ while (1) {
 ```
 
 ---
-class: ex-basicreactor
+class: ex-basicreactor2
 
-## The basic reactor
+## The basic reactor implementation
 
 ```perl
 our $timers     = [...];
@@ -444,6 +475,10 @@ while (1) {
 - [`IO::Async::Loop::Select`](https://metacpan.org/source/IO::Async::Loop::Select)
 - [`Mojo::Reactor::Poll`](https://metacpan.org/source/Mojo::Reactor::Poll)
 ]
+
+???
+These links, which will be available to you with the slides, link directly to the source code of these modules on
+metacpan so you can take a look at how they work.
 
 ---
 name:  not-all-roses

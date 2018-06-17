@@ -94,6 +94,9 @@
 .big {
     font-size: 150%;
 }
+.small {
+    font-size: 50%;
+}
 
 .remark-code-line-highlighted {
     background-color: rgba(200,200,255,.25);
