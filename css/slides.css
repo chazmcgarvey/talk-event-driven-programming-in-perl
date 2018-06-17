@@ -1,5 +1,43 @@
 
-#slide-bluehost img {
-    width: 250px;
+#slide-bluehost {
+    background: url('../img/bluehost.png') 1100px;
+}
+
+.pizza img {
+    width: 70%;
+}
+.pizza .bash {
+    font-size: 38px;
+}
+.pizza .perl {
+    font-size: 36px;
+}
+
+.ex-hwinterrupts .bash {
+    font-size: 22px;
+}
+
+.ex-pressenter .perl {
+    font-size: 40px;
+}
+
+.ex-signals .perl {
+    font-size: 36px;
+}
+
+.ex-gui .perl {
+    font-size: 28px;
+}
+
+.event-types ul {
+    font-size: 34px;
+}
+
+.syscalls ul {
+    font-size: 34px;
+}
+
+.ex-basicreactor .perl {
+    font-size: 38px;
 }
 

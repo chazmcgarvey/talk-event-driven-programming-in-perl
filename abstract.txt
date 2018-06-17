@@ -1,7 +1,7 @@
 Event-driven programming in Perl
 Charles McGarvey | Mon, 6/18 at 2:00 pm | 50 minutes | Ballroom B
 
-Event-driven programming is a paradigm where programmers creates subroutines
+Event-driven programming is a paradigm where programmers create subroutines
 that get called when events occur. Events can be just about anything: timers
 expiring, new data becoming available to read from a socket, even humans
 clicking on things in an interactive program.

@@ -16,13 +16,388 @@ Charles McGarvey
 class:  center, middle
 name:   bluehost
 
-![Bluehost](img/bluehost.png)
-
-### https://bluehost.com/jobs
-
 ???
 - My employer is hiring.
 - It's a pretty cool employer...
+
+---
+## "Normal" [userspace] programs
+
+.big[
+1. Parse args.
+2. Read input.
+3. Do stuff.
+4. Write results as output.
+]
+
+---
+class: pizza
+background-image: url(img/pizza.jpg)
+background-size: 100%
+
+--
+```bash
+# orderpizza --crust-type=thin \
+             --toppings=cheese,pepperoni,mushrooms
+```
+
+--
+```perl
+# source code of the orderpizza program
+
+my $order = get_order_from_args(@ARGV);
+
+my $ingredients = gather_ingredients($order);
+
+my $pizza = prepare_and_bake($order, $ingredentials);
+
+print($pizza);
+```
+
+---
+## Event-driven programs
+
+.big[
+1. Events happen.
+2. When events happen, some code runs and does something.
+]
+
+???
+At it's core, event-driven programming is this simple.
+
+But there are some complications and things to knows, which is why this talk exists.
+
+---
+class: center, middle
+
+![Event loop](img/eventloop.svg)
+
+???
+We'll refine this model as we go.
+
+---
+class: ex-hwinterrupts
+
+## Hardware interrupts
+
+```bash
+# cat /proc/interrupts
+            CPU0       CPU1
+   0:         51          0  IR-IO-APIC    2-edge      timer
+   1:     685006          5  IR-IO-APIC    1-edge      i8042
+   8:          0          0  IR-IO-APIC    8-edge      rtc0
+   9:    1724419       6314  IR-IO-APIC    9-fasteoi   acpi
+  12:   12300601        138  IR-IO-APIC   12-edge      i8042
+  16:          0          0  IR-IO-APIC   16-fasteoi   i801_smbus
+ 120:          0          0  DMAR-MSI    0-edge      dmar0
+ 121:          0          0  DMAR-MSI    1-edge      dmar1
+ 122:    7009890      45112  IR-PCI-MSI 327680-edge      xhci_hcd
+ 123:         44          3  IR-PCI-MSI 360448-edge      mei_me
+ 124:        509          0  IR-PCI-MSI 1048576-edge      rtsx_pci
+ 125:      80130          0  IR-PCI-MSI 2621440-edge      nvme0q0, nvme0q1
+ 126:  121892439    2961357  IR-PCI-MSI 32768-edge      i915
+ 127:         49        100  IR-PCI-MSI 514048-edge      snd_hda_intel:card0
+ 128:          0      79412  IR-PCI-MSI 2621441-edge      nvme0q2
+
+...
+```
+
+???
+When a HW interrupt happens, the appropriate code to run is locate in the interrupt service routine
+
+---
+class: ex-pressenter
+
+## Your first event-driven program
+
+.middle[
+```perl
+print "Press <Enter> to continue.";
+<STDIN>;
+
+handle_enter_keypress_event();
+```
+]
+
+---
+class: ex-pressenter
+
+## Your first event-driven program
+
+.middle[
+```perl
+print "Press <Enter> to continue.";
+*<STDIN>;
+
+handle_enter_keypress_event();
+```
+]
+
+.big[
+- Wait for an event
+]
+
+---
+class: ex-pressenter
+
+## Your first event-driven program
+
+.middle[
+```perl
+print "Press <Enter> to continue.";
+*<STDIN>;
+
+handle_enter_keypress_event();
+```
+]
+
+.big[
+- Wait for an event
+- Event source
+]
+
+---
+class: ex-pressenter
+
+## Your first event-driven program
+
+.middle[
+```perl
+print "Press <Enter> to continue.";
+<STDIN>;
+
+*handle_enter_keypress_event();
+```
+]
+
+.big[
+- Wait for an event
+- Event source
+- Event handler
+]
+
+---
+class: ex-signals
+
+## Signals
+
+```perl
+use POSIX;
+
+$SIG{USR1} = sub { handle_usr1_signal_event() };
+$SIG{ALRM} = sub { handle_timer_event() };
+$SIG{QUIT} = sub { exit() };
+
+alarm(3);
+
+while (1) { POSIX::pause() }
+```
+
+---
+class: ex-signals
+
+## Signals
+
+```perl
+use POSIX;
+
+*$SIG{USR1} = sub { handle_usr1_signal_event() };
+*$SIG{ALRM} = sub { handle_timer_event() };
+*$SIG{QUIT} = sub { exit() };
+
+alarm(3);
+
+while (1) { POSIX::pause() }
+```
+
+???
+Notice that this program is capable of handling more than just one event handler at a time.
+
+---
+class: ex-signals
+
+## Signals
+
+```perl
+use POSIX;
+
+$SIG{USR1} = sub { handle_usr1_signal_event() };
+$SIG{ALRM} = sub { handle_timer_event() };
+$SIG{QUIT} = sub { exit() };
+
+alarm(3);
+
+*while (1) { POSIX::pause() }
+```
+
+.big[
+- Program yields time to the kernel
+]
+
+???
+This example has a loop, but it's not really doing anything.
+
+But actually it is doing something very important: It's yielding its processing time to the kernel.
+
+And kernel informs the program of events.
+
+You might be able to use `sleep` as well, but some implementations of libc
+in the past have implemented `sleep` using `alarm`.
+
+Don't know how common that is nowadays, but old habbits...
+
+---
+class: ex-gui
+
+## Graphical user interface example
+
+```perl
+use Gtk3 '-init';
+
+my $window = Gtk3::Window->new;
+
+$window->signal_connect('key-press-event' => \&handle_keypress_event);
+$window->signal_connect('delete-event'    => \&Gtk3::main_quit);
+
+$window->show_all;
+
+Gtk3::main();
+```
+
+???
+A user interface happens to be a good place to use evented code because humans are spontaneous and unpredictable.
+
+---
+class: ex-gui
+
+## Graphical user interface example
+
+```perl
+use Gtk3 '-init';
+
+my $window = Gtk3::Window->new;
+
+*$window->signal_connect('key-press-event' => \&handle_keypress_event);
+*$window->signal_connect('delete-event'    => \&Gtk3::main_quit);
+
+$window->show_all;
+
+Gtk3::main();
+```
+
+.big[
+- Event handlers
+]
+
+---
+class: ex-gui
+
+## Graphical user interface example
+
+```perl
+use Gtk3 '-init';
+
+my $window = Gtk3::Window->new;
+
+$window->signal_connect('key-press-event' => \&handle_keypress_event);
+$window->signal_connect('delete-event'    => \&Gtk3::main_quit);
+
+$window->show_all;
+
+*Gtk3::main();
+```
+
+.big[
+- Event handlers
+- Yield and wait for events
+]
+
+---
+class: event-types
+
+## Types of events
+
+- IO
+
+???
+Data available on a socket, or a new connection.
+
+Server or client, data across a wire cannot typically be relied upon to arrive in a predictable fashion, so an
+event-driven architect makes a lot of sense for network applications.
+
+--
+- Signals
+
+???
+As far as my program is concerned, it can receive a signal or message from another program at any time.
+
+--
+- Timer
+
+???
+If I need something to happen to happen in five minutes or at a specific absolute time, using the idea of an alarm clock
+is tempting. I can set an alarm and pretend that the clock itself is a source of events.
+
+--
+- User input
+
+???
+Human beings of course are masters of spontaneity.
+
+Are they going to press a button on the keyboard next, or move the mouse? If my program is connected to a microphone,
+maybe the human is going to start talking to the program. The program has to be ready for anything, so defining and
+accepting "events" for all the different ways that a human can interact with the program is a good way to go.
+
+--
+- Anything that can happen spontaneously in the real world.
+
+???
+Lots of other external systems (besides humans) can "generate" events.
+
+Lot of this requires kernel facilities. Speaking of which, how are these types of things implemented?
+
+---
+class: syscalls
+
+## How event-driven userspace code works
+
+### syscalls
+
+- [`pause`](http://man.he.net/man2/pause) - Sleeps until signal
+- [`select`](http://man.he.net/man2/select), [`poll`](http://man.he.net/man2/poll), [`epoll`](http://man.he.net/man7/epoll), [`kqueue`](https://www.freebsd.org/cgi/man.cgi?format=ascii&sektion=2&query=kqueue) - Monitor multiple file descriptors
+- [`clock_gettime`](http://man.he.net/man2/clock_gettime) - What time is it now?
+
+---
+class: ex-basicreactor
+
+## The basic reactor
+
+```perl
+our $timers     = [...];
+our $io_handles = [...];
+
+while (1) {
+    my $next_timer = find_next_timer($timers);
+
+    poll($io_handles, $next_timer->time_from_now);
+
+    handle_ready_io_handles($io_handles);
+    handle_expired_timers($timers);
+}
+```
+
+---
+
+## Reactor examples on CPAN
+
+.big[
+- [`POE::Loop::IO_Poll`](https://metacpan.org/source/POE::Loop::IO_Poll)
+- [`POE::Loop::Select`](https://metacpan.org/source/POE::Loop::Select)
+- [`AnyEvent::Loop`](https://metacpan.org/source/AnyEvent::Loop)
+- [`IO::Async::Loop::Poll`](https://metacpan.org/source/IO::Async::Loop::Poll)
+- [`IO::Async::Loop::Select`](https://metacpan.org/source/IO::Async::Loop::Select)
+- [`Mojo::Reactor::Poll`](https://metacpan.org/source/Mojo::Reactor::Poll)
+]
 
 ---
 class: center, middle
@@ -38,5 +413,5 @@ name:  last
 
 ### Thanks.
 
-</textarea><script src="https://gnab.github.io/remark/downloads/remark-latest.min.js"></script><script>var slideshow = remark.create({countIncrementalSlides: true, highlightLanguage: '', highlightLines: true, ratio: '16:9', /*slideNumberFormat: '',*/ navigation: {scroll: false, touch: false, click: false}})</script><script src="js/common.js"></script><script src="js/slides.js"></script></body></html>
+</textarea><script src="https://gnab.github.io/remark/downloads/remark-latest.min.js"></script><script>var slideshow = remark.create({countIncrementalSlides: true, highlightLanguage: '', highlightLines: true, highlightStyle: 'hybrid', ratio: '16:9', /*slideNumberFormat: '',*/ navigation: {scroll: false, touch: false, click: false}})</script><script src="js/common.js"></script><script src="js/slides.js"></script></body></html>
 <!-- vim: set ts=4 sts=4 sw=4 tw=120 et ft=markdown nowrap: -->

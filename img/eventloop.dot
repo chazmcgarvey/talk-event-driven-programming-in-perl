@@ -1,0 +1,30 @@
+
+digraph G {
+    rankdir = LR
+       
+    node
+    [
+        fontname    = "Inconsolata"
+        fontsize    = 20
+        shape       = record
+        style       = rounded
+        margin      = "0.2,0.2"
+    ]
+
+    edge
+    [
+        fontname    = "Inconsolata"
+        fontsize    = 18
+        arrowhead   = vee
+        arrowtail   = vee
+        arrowsize   = 2
+    ]
+
+    "Event source 1" -> "Wait for\nan event\nto happen"
+    "Event source 2" -> "Wait for\nan event\nto happen"
+    "Event source n" -> "Wait for\nan event\nto happen"
+
+    "Wait for\nan event\nto happen" -> "Handle an\nevent" [label="Something happened...\n", tailport="n", headport="n"]
+    "Handle an\nevent" -> "Wait for\nan event\nto happen" [tailport="s", headport="s"]
+}
+

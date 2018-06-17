@@ -25,7 +25,7 @@ run-offline: offline
 	$(DOT) -Tsvg -o$@ $<
 
 $(SLIDES).pdf: slides.html $(wildcard css/*) $(wildcard img/*) $(svgfiles)
-	docker run --rm -v `pwd`:/pwd astefanutti/decktape /pwd/slides.html /pwd/$(SLIDES).pdf
+	docker run --network host --rm -t -v `pwd`:/slides astefanutti/decktape http://localhost:5000 /slides/$(SLIDES).pdf
 
 slides-offline.html: slides.html
 	sed -e '1 a <!-- This file is auto-generated - DO NOT EDIT!!! -->' \

@@ -1,2 +1,4 @@
+*.pdf
+/img/eventloop.svg
 /remark.min.js
 /slides-offline.html

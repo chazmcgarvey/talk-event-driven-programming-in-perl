@@ -91,3 +91,14 @@
     color: #7d9726;
 }
 
+.big {
+    font-size: 150%;
+}
+
+.remark-code-line-highlighted {
+    background-color: rgba(200,200,255,.25);
+}
+.hljs-hybrid .hljs {
+    background: rgba(29,31,33,.96);
+}
+

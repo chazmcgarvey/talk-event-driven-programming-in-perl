@@ -1,40 +1,66 @@
 
 Topics:
 
-Evolution of event-driven programming:
-- Wait for a key press or line of text.
-- Interrupts (hardware and software).
-- Modern event loops
+1. Evolution of event-driven programming:
+X Wait for a key press or line of text.
+X Interrupts (hardware and software).
+X Modern event loops
 
-How to write a modern event-loop.
-- kernel facilities (poll, select, etc.)
+2. Types of events in modern applications:
+X IO
+X Timer
+X User input
+X Signal
+X Anything that can spontaneously happen in the real world.
 
-Event-drive programming in Perl
-- POE
-- AnyEvent
-- IO::Async
+3. How to write a modern event-loop.
+X kernel facilities (poll, select, etc.)
 
-List of already-built event loops.
+4. List of already-built event loops.
 - EV
 - Glib
 
-Types of events in modern applications:
-- Data available
-- Timer
-- User input
-- Signal
-- Anything that can spontaneously happen in the real world.
+5. Event-driven programming in Perl
+- POE
+- AnyEvent
+- IO::Async
+- Mojo::IOLoop
 
-Exceptions in event-driven code.
+6. Special considerations
+- Exceptions in event-driven code.
+- SIGPIPE, EPIPE - might have more to do with long-lived processes rather than
+  just event-driven programming, but still something to watch out for...
 
-Promises:
+7. Promises:
 - Future
 - Future::AsyncAwait
 - Future::Utils
 
-Real-world uses for event-driven applications:
+8. Real-world uses for event-driven applications:
 - Webhooks
-- WebSockets
 - PubsubHubbub
 - msg queue
+
+
+
+
+Other topics:
+X What is event-driven programming?
+- Reactor: event loop that can receive multiple types of events and
+  demultiplex them, delivering them to appropriate handlers.
+- C10k problem
+- EDA (event-driven architecture)
+- Benefits of Event-driven
+
+Traditional programs:
+- CGI - web server calls your program, and your program does its thing and
+  finishes.
+- filters - grep, less, sed, etc. Like a function, the program takes its input
+  and produces some output.
+
+Perl features:
+- first-class subroutines
+
+- Can mix traditional architecture with event-driven (like docker that
+  provides both an http and command-line interface.
 
