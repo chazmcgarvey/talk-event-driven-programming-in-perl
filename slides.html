@@ -530,12 +530,354 @@ By my count there are four main front ends.
 The benefit of using one of these rather than the reactors themselves is that your code will automatically work with any
 of a number of supported reactors.
 
+---
+class: ex-poe
+
+## `POE`
+
+```perl
+use POE;
+use Time::HiRes qw(time);
+
+POE::Session->create(
+    inline_states => {
+        _start  => sub {
+            $_[KERNEL]->delay(tick => 5);
+        },
+
+        tick    => \&handle_timer_event,
+    },
+);
+
+POE::Kernel->run;
+```
+
+???
 POE:
 - The oldest, released 1998
 - Parallel processing was it's primary use.
-- Everything center by the "wheel" (loop).
-- You add "handles" to the object.
-- Each type of handle has certain events it knows how to handle.
+
+---
+class: ex-poe
+
+## `POE`
+
+```perl
+*use POE;
+use Time::HiRes qw(time);
+
+POE::Session->create(
+    inline_states => {
+        _start  => sub {
+            $_[KERNEL]->delay(tick => 5);
+        },
+
+        tick    => \&handle_timer_event,
+    },
+);
+
+POE::Kernel->run;
+```
+
+???
+Using `POE` will implicitly load all the modules you'll need to actually do anything.
+- In this case, `POE::Session` and `POE::Kernel`.
+
+---
+class: ex-poe
+
+## `POE`
+
+```perl
+use POE;
+use Time::HiRes qw(time);
+
+POE::Session->create(
+    inline_states => {
+        _start  => sub {
+            $_[KERNEL]->delay(tick => 5);
+        },
+
+        tick    => \&handle_timer_event,
+    },
+);
+
+*POE::Kernel->run;
+```
+
+???
+Run the reactor.
+
+In POE, the kernel is the thing that manages processes AKA sessions.
+
+---
+class: ex-poe
+
+## `POE`
+
+```perl
+use POE;
+use Time::HiRes qw(time);
+
+*POE::Session->create(
+*   inline_states => {
+*       _start  => sub {
+*           $_[KERNEL]->delay(tick => 5);
+*       },
+*
+*       tick    => \&handle_timer_event,
+*   },
+*);
+
+POE::Kernel->run;
+```
+
+???
+
+Sessions can be created to do stuff.
+
+---
+class: ex-ioasync
+
+## `IO::Async`
+
+```perl
+use IO::Async::Loop;
+use IO::Async::Timer::Countdown;
+
+my $loop = IO::Async::Loop->new;
+
+my $timer = IO::Async::Timer::Countdown->new(
+    delay       => 5,  # seconds
+    on_expire   => \&handle_timer_event,
+);
+$timer->start;
+
+$loop->add($timer);
+
+$loop->run;
+```
+
+---
+class: ex-ioasync
+
+## `IO::Async`
+
+```perl
+use IO::Async::Loop;
+use IO::Async::Timer::Countdown;
+
+*my $loop = IO::Async::Loop->new;
+
+my $timer = IO::Async::Timer::Countdown->new(
+    delay       => 5,  # seconds
+    on_expire   => \&handle_timer_event,
+);
+$timer->start;
+
+$loop->add($timer);
+
+$loop->run;
+```
+
+???
+Create the loop
+- IO::Async doesn't seem to have a concept of a "default" loop.
+  - The user has control over starting the loop, as usual, but it does mean that modules can't really register
+    themselves.
+
+---
+class: ex-ioasync
+
+## `IO::Async`
+
+```perl
+use IO::Async::Loop;
+use IO::Async::Timer::Countdown;
+
+my $loop = IO::Async::Loop->new;
+
+my $timer = IO::Async::Timer::Countdown->new(
+    delay       => 5,  # seconds
+    on_expire   => \&handle_timer_event,
+);
+$timer->start;
+
+*$loop->add($timer);
+
+*$loop->run;
+```
+
+???
+Add your handler to the loop, and of course run the loop.
+
+---
+class: ex-ioasync
+
+## `IO::Async`
+
+```perl
+use IO::Async::Loop;
+use IO::Async::Timer::Countdown;
+
+my $loop = IO::Async::Loop->new;
+
+my $timer = IO::Async::Timer::Countdown->new(
+    delay       => 5,  # seconds
+    on_expire   => \&handle_timer_event,
+);
+*$timer->start;
+
+$loop->add($timer);
+
+$loop->run;
+```
+
+???
+Remember to actually start your timer! The timer facilities in other loops seem to do this for you, but this does give you more control.
+- For example, you can call `reset` on the timer to set it back it it's initial delay value.
+
+---
+class: ex-mojoioloop
+
+## `Mojo::IOLoop`
+
+```perl
+use Mojo::IOLoop;
+
+Mojo::IOLoop->timer(5 => \&handle_timer_event);
+
+Mojo::IOLoop->start if ! Mojo::IOLoop->is_running;
+```
+
+---
+class: ex-mojoioloop
+
+## `Mojo::IOLoop`
+
+```perl
+use Mojo::IOLoop;
+
+*Mojo::IOLoop->timer(5 => \&handle_timer_event);
+
+Mojo::IOLoop->start if ! Mojo::IOLoop->is_running;
+```
+
+???
+Create the timer... easy.
+
+---
+class: ex-mojoioloop
+
+## `Mojo::IOLoop`
+
+```perl
+use Mojo::IOLoop;
+
+Mojo::IOLoop->timer(5 => \&handle_timer_event);
+
+*Mojo::IOLoop->start if ! Mojo::IOLoop->is_running;
+```
+
+???
+And start the loop. Very easy.
+
+- `Mojo::IOLoop` provides methods for creating network clients and servers without much code.
+- Doesn't seem to have support for demultiplexing signals, but if this is important you can probably set that up
+  directly with the `EV` reactor back end.
+
+---
+class: ex-anyevent
+
+## `AnyEvent`
+
+```perl
+use EV;
+use AE;
+
+my $timer = AE::timer(5, 0 => \&handle_timer_event);
+
+EV::run();
+```
+
+---
+class: ex-anyevent
+
+## `AnyEvent`
+
+```perl
+*use EV;
+use AE;
+
+my $timer = AE::timer(5, 0 => \&handle_timer_event);
+
+*EV::run();
+```
+
+---
+class: ex-anyevent
+
+## `AnyEvent`
+
+```perl
+*use Glib;
+use AE;
+
+*my $loop = Glib::MainLoop->new;
+
+my $timer = AE::timer(5, 0 => \&handle_timer_event);
+
+*$loop->run;
+```
+
+---
+class: ex-anyevent
+
+## `AnyEvent`
+
+```perl
+use Glib;
+use AE;
+
+my $loop = Glib::MainLoop->new;
+
+*my $timer = AE::timer(5, 0 => \&handle_timer_event);
+
+$loop->run;
+```
+
+???
+Create your timer.
+
+By the way, the second argument to `AE::timer` represents the interval if you want a periodic timer.
+
+- Remember to save the return value of setting up your timer and other handles.
+  - That thing is actually called a "watcher", and the destruction of watcher objects is how event handlers get
+    unregistered.
+
+`AnyEvent` technically has two APIs. This is the "simplified" API.
+
+---
+class: ex-anyevent
+
+## `AnyEvent`
+
+```perl
+use Glib;
+*use AnyEvent;
+
+my $loop = Glib::MainLoop->new;
+
+*my $timer = AnyEvent->timer(
+*   after   => 5,
+*   cb      => \&handle_timer_event,
+*);
+
+$loop->run;
+```
+
+???
+This is what the "complicated" API looks like.
 
 ---
 name:  not-all-roses
@@ -862,6 +1204,12 @@ my $eventual_future = repeat {
 
 ---
 ## Events in the world
+
+- Interconnected devices
+
+???
+- Events are everywhere in the world, and our devices can tell other devices about them.
+  - Interconnected devices (IoT)
 
 ---
 class: center, middle

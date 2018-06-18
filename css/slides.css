@@ -83,3 +83,19 @@
     font-size: 24px;
 }
 
+.ex-poe .perl {
+    font-size: 30px;
+}
+
+.ex-ioasync .perl {
+    font-size: 30px;
+}
+
+.ex-mojoioloop .perl {
+    font-size: 38px;
+}
+
+.ex-anyevent .perl {
+    font-size: 38px;
+}
+

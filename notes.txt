@@ -1,4 +1,9 @@
 
+TODO:
+- Get more knowledge about the Reactor front ends.
+- Throw up some examples in some slides (#5).
+- Add a section at the end to get out of the weeds and put a bit ol' bow on it.
+
 Topics:
 
 1. Evolution of event-driven programming:
@@ -22,10 +27,10 @@ X Glib
 X ...
 
 5. Event-driven programming in Perl
-- AnyEvent
-- IO::Async
-- Mojo::IOLoop
-- POE
+X AnyEvent
+X IO::Async
+X Mojo::IOLoop
+X POE
 
 6. Special considerations
 X Exceptions in event-driven code.
@@ -48,7 +53,7 @@ X Future::Utils
 
 Other topics:
 X What is event-driven programming?
-- Reactor: event loop that can receive multiple types of events and
+X Reactor: event loop that can receive multiple types of events and
   demultiplex them, delivering them to appropriate handlers.
 - C10k problem
 - EDA (event-driven architecture)
