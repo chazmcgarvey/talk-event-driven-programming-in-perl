@@ -464,7 +464,6 @@ while (1) {
 ```
 
 ---
-
 ## Reactor examples on CPAN
 
 .big[
@@ -479,6 +478,64 @@ while (1) {
 ???
 These links, which will be available to you with the slides, link directly to the source code of these modules on
 metacpan so you can take a look at how they work.
+
+---
+## Reactors
+
+.col.big[
+- [`Cocoa::EventLoop`](https://metacpan.org/pod/Cocoa::EventLoop)
+- [`EV`](https://metacpan.org/pod/EV)
+- [`Event::Lib`](https://metacpan.org/pod/Event::Lib)
+- [`Event`](https://metacpan.org/pod/Event)
+- [`FLTK`](https://metacpan.org/pod/FLTK)
+]
+.col.big[
+- [`Glib`](https://metacpan.org/pod/Glib), [`Gtk`](https://metacpan.org/pod/Gtk), [`Gtk2`](https://metacpan.org/pod/Gtk2)
+- [`Tk`](https://metacpan.org/pod/Tk)
+- [`UV`](https://metacpan.org/pod/UV)
+- [`Wx`](https://metacpan.org/pod/Wx)
+- probably more...
+]
+
+???
+I'm not going to go over any of these.
+
+- You can use any one of these directly.
+- Some of that are better than others (obvious).
+- Which one you choose may depend one what you're building.
+  - If you're building a GUI, your choice is made for you.
+  - High-concurrency network application, `EV` is a good choice.
+
+But actually you may not need to pick one...
+
+---
+class: center, middle
+
+## Reactor "front ends"
+
+???
+By my count there are four main front ends.
+
+---
+## Reactor "front ends"
+
+.big[
+- [**`POE`**](https://metacpan.org/pod/POE) - Portable multitasking and networking framework for any event loop (or Perl, Objects, and Events)
+- [**`IO::Async`**](https://metacpan.org/pod/IO::Async) - Asynchronous event-driven programming
+- [**`Mojo::IOLoop`**](https://metacpan.org/pod/Mojo::IOLoop) - Minimalistic event loop
+- [**`AnyEvent`**](https://metacpan.org/pod/AnyEvent) - The DBI of event loop programming
+]
+
+???
+The benefit of using one of these rather than the reactors themselves is that your code will automatically work with any
+of a number of supported reactors.
+
+POE:
+- The oldest, released 1998
+- Parallel processing was it's primary use.
+- Everything center by the "wheel" (loop).
+- You add "handles" to the object.
+- Each type of handle has certain events it knows how to handle.
 
 ---
 name:  not-all-roses
@@ -530,6 +587,9 @@ $promise->on_done(sub { ... });
 $promise->on_fail(sub { ... });
 ```
 
+???
+More on this later.
+
 ---
 class: center, middle
 
@@ -566,7 +626,152 @@ Look for `EPIPE` from syscalls (like [`write`](http://man.he.net/man2/write)) in
 ---
 class: center, middle
 
-## Use [`Future::AsyncAwait`](https://metacpan.org/pod/Future::AsyncAwait).
+## Debugging event-driven code
+
+---
+class: ex-debugging
+
+## Debugging event-driven code
+
+.big[
+- Print debug info to `STDERR`.
+]
+
+```bash
+export PERL_FUTURE_DEBUG=1
+# and
+export ANYEVENT_DEBUG=8
+# or
+export MOJO_IOLOOP_DEBUG=1
+# etc.
+```
+
+---
+## Debugging event-driven code
+
+.big[
+- Print debug info to `STDERR`.
+- Check out [`AnyEvent::Debug`](https://metacpan.org/pod/AnyEvent::Debug).
+]
+
+---
+## Debugging event-driven code
+
+.big[
+- Print debug info to `STDERR`.
+- Check out [`AnyEvent::Debug`](https://metacpan.org/pod/AnyEvent::Debug).
+- Use [`perl5db.pl`](https://metacpan.org/pod/perl5db.pl) and other `Devel::` debuggers.
+]
+
+???
+Traditional debuggers are still useful for event-driven code.
+- Be sure to carefully avoid memory leaks -- they are more devastating in long-lived programs which event-driven
+programs tend to be.
+
+---
+class: center, middle
+
+## Promises:
+### Proxy objects for future values
+
+???
+Proxy objects for values that have not yet been retrieved or computed.
+
+- In some cases, promises can provide you an alternative, often more useful interface to callbacks.
+
+---
+class: ex-future
+
+## Basic usage (using [`Future`](https://metacpan.org/pod/Future))
+
+```perl
+my $future = fetch_remote_file($url);
+
+$future->on_done(sub($filename, $contents) {
+    print "Fetched $filename\n";
+});
+```
+
+???
+The future is an object that stands in for the thing we actually want until the thing we want is available.
+
+--
+```perl
+$future->on_fail(sub($error) {
+    warn $error;
+});
+```
+
+???
+If the operation that provides the `Future` isn't able to fulfill its promise to provide us what we want, the `Future`
+may be set to a "fail" state.
+
+- For any operation that can fail (and that includes almost everything), it's a good idea to handle errors.
+
+---
+class: ex-future
+
+## Chaining futures
+
+```perl
+my $future = fetch_remote_file($url)
+    ->then(sub($filename, $contents) {
+        my $another_future = write_local_file("/tmp/$filename",
+                                              $contents);
+        return $another_future;
+    });
+
+$future->on_done(sub($filepath) {
+    print "Saved file to $filepath\n";
+});
+
+$future->on_fail(sub($error) {
+    warn $error;
+});
+```
+
+---
+class: ex-future2
+
+## Creating futures
+
+```perl
+use AnyEvent::HTTP;
+use Future;
+
+sub fetch_remote_file($url) {
+    my $future = Future->new;
+
+    http_get $url => sub($data, $headers) {
+        if ($headers->{Status} =~ /^[23]/) {
+            my ($filename) = get_filename($headers);
+            $future->done($filename, $data);
+        }
+        else {
+            $future->fail("Failed to fetch file: $headers->{Reason}");
+        }
+    };
+
+    return $future;
+}
+```
+
+---
+class: center, middle
+
+Check out [Paul Evan's blog](http://leonerds-code.blogspot.com/2013/12/futures-advent-day-1.html) for more things you can do with `Future`s.
+
+And, of course, [read the pod](https://metacpan.org/pod/Future).
+
+???
+Paul did an advent calendar with short posts detailing the things you can do with `Future`.
+
+- It's really well done.
+
+---
+class: center, middle
+
+## There's also [`Future::AsyncAwait`](https://metacpan.org/pod/Future::AsyncAwait).
 
 ???
 If you have used JavaScript recently, you may have used its "async/await" feature to clean up your non-blocking code.
@@ -617,11 +822,46 @@ async sub do_two_things
 
 ???
 There are caveats: Localized variable assignments don't work, nor anything that has implied local-like behavior.
+
 ---
+class: center, middle
 
+## Finally, there's also [`Future::Utils`](https://metacpan.org/pod/Future::Utils).
+
+---
+class: ex-future2
+
+## Call
+
+```perl
+my $future = call {
+    do_stuff();
+
+    ...
+
+    my $future = ...;
+    return $future;
+};
+```
+
+Any exceptions throw in the code block are caught and become a failed `Future`.
+
+---
+class: ex-future2
+
+## Loops and stuff
+
+```perl
+use Future::Utils qw(repeat);
+
+my $eventual_future = repeat {
+   my $trial_future = ...
+   return $trial_future;
+} while => sub($last_trial_future) { return should_keep_going($last_trial_future) };
+```
+
+---
 ## Events in the world
-
-
 
 ---
 class: center, middle

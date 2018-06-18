@@ -13,18 +13,19 @@ X User input
 X Signal
 X Anything that can spontaneously happen in the real world.
 
-3. How to write a modern event-loop.
+3. How to write a modern event-loop (reactor style).
 X kernel facilities (poll, select, etc.)
 
-4. List of already-built event loops.
-- EV
-- Glib
+4. List of already-built reactors.
+X EV
+X Glib
+X ...
 
 5. Event-driven programming in Perl
-- POE
 - AnyEvent
 - IO::Async
 - Mojo::IOLoop
+- POE
 
 6. Special considerations
 X Exceptions in event-driven code.
@@ -33,9 +34,9 @@ X SIGPIPE, EPIPE - might have more to do with long-lived processes rather than
 X You should almost always check the return code of your syscalls to see if they succeeded or not.
 
 7. Promises:
-- Future
-- Future::AsyncAwait
-- Future::Utils
+X Future
+X Future::AsyncAwait
+X Future::Utils
 
 8. Real-world uses for event-driven applications:
 - Webhooks
@@ -51,13 +52,13 @@ X What is event-driven programming?
   demultiplex them, delivering them to appropriate handlers.
 - C10k problem
 - EDA (event-driven architecture)
-- Benefits of Event-driven
-- How to debug event-driven code.
+X Benefits of Event-driven
+X How to debug event-driven code.
 
 Traditional programs:
 - CGI - web server calls your program, and your program does its thing and
   finishes.
-- filters - grep, less, sed, etc. Like a function, the program takes its input
+X filters - grep, less, sed, etc. Like a function, the program takes its input
   and produces some output.
 
 Perl features:
