@@ -1,8 +1,8 @@
 
 TODO:
-- Get more knowledge about the Reactor front ends.
-- Throw up some examples in some slides (#5).
-- Add a section at the end to get out of the weeds and put a bit ol' bow on it.
+X Get more knowledge about the Reactor front ends.
+X Throw up some examples in some slides (#5).
+X Add a section at the end to get out of the weeds and put a bit ol' bow on it.
 
 Topics:
 

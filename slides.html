@@ -444,6 +444,12 @@ while (1) {
 }
 ```
 
+???
+Of course, you don't actually need to know anything about which syscalls are used and how a reactor actually works to do
+event-driven programming. (and if any of this is going over your head, that's fine.)
+
+But I'm covering it because I think it's good for you.
+
 ---
 class: ex-basicreactor2
 
@@ -1203,13 +1209,60 @@ my $eventual_future = repeat {
 ```
 
 ---
-## Events in the world
+class: center, middle
 
-- Interconnected devices
+## Final thoughts
+
+---
+class: center, middle
+
+### Proactor pattern
 
 ???
-- Events are everywhere in the world, and our devices can tell other devices about them.
-  - Interconnected devices (IoT)
+We've gone over the Reactor pattern quite a bit, and for good reason.
+
+It's the predominant implementation of event-driven code in userspace apps.
+
+But you should also know about the Proactor pattern.
+
+It's basically the same as the reactor pattern except the event handlers perform asynchronous operations.
+- Can be done using special kernel facilities
+- or by keeping a thread pool.
+
+One thing to keep in mind about the reactor pattern is that any sort of blocking that occurs by any event handlers will
+slow everything down quite a bit. The proactor pattern can help avoid problems.
+
+---
+class: center, middle
+
+### Event-driven <strike>programming</strike> architecture
+
+???
+Making your apps reactive and able to generate and respond to events is the tip of a very large iceburg.
+
+- Pubsub systems can be used to distribute events at a massive scale.
+- Message queues are components that can be plugged in to provide guaranteed delivery of events.
+
+Once your programs are event-driven, they're ready to be plugged into a whole world of other services.
+
+---
+class: center, middle
+
+### Lots of interconnected devices
+
+???
+This concept has a trendy name, but I can't say it because I've swarn off buzzwords.
+
+Event-driven programming and architecture is used as a foundation for building APIs and applications that scale, if
+that's important to you.
+
+You can avoid coupling: When one of your devices has an event, it just needs to notify your world of devices and let the
+devices decide what to do.
+
+For example, if your car has connected sensors, it can notify your devices when you leave the car. Then your phone can
+receive that event and notify you that you left your kid in the car.
+
+So there are a lot of cool applications for this stuff.
 
 ---
 class: center, middle
